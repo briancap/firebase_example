@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "302400986306",
+    "firebase_url": "https://roomy-a9ddb.firebaseio.com",
+    "project_id": "roomy-a9ddb",
+    "storage_bucket": "roomy-a9ddb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302400986306:android:2bc6642b020dae3c",
+        "android_client_info": {
+          "package_name": "com.example.brian.roomy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "302400986306-cbjlteuvvf0a6lgketvlda15065tic70.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.brian.roomy",
+            "certificate_hash": "834082460366adb74d5d73e18b434a56c20c51aa"
+          }
+        },
+        {
+          "client_id": "302400986306-qqj2k6dlsuev03vq077ism6g8nq78v34.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI1a6PsaWYyR74UtU5n6eaQPYj4ZVL_eA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "302400986306-qqj2k6dlsuev03vq077ism6g8nq78v34.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
