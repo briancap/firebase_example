@@ -32,4 +32,5 @@ dependencies {
 
 }
 
+//this is what reads the config info from the google-services.json file
 apply plugin: 'com.google.gms.google-services'
