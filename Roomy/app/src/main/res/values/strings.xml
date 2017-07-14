@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Roomy</string>
+
+
+    <!--    Options Menu Values     -->
+    <string name="options_menu_settings">Settings</string>
 </resources>
