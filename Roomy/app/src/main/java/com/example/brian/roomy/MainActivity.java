@@ -5,8 +5,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+public class MainActivity extends AppCompatActivity {
+    private FirebaseDatabase    mFirebaseDatabase;
+    private DatabaseReference   mTenetDbReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +23,10 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.container_main_acticity, new HomeScreenFragment())
                     .commit();
         }
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mTenetDbReference = mFirebaseDatabase.getReference().child(getString(R.string.top_level_tenet));
+
     }
 
     @Override

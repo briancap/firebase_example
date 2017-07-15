@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Roomy</string>
+    <!--           Firebase DB Values          -->
+    <string name="top_level_tenet">tenet</string>
 
 
     <!--    Options Menu Values     -->
