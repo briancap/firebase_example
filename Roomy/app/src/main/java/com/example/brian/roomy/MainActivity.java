@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mTenetDbReference = mFirebaseDatabase.getReference().child(getString(R.string.top_level_tenet));
+        mTenetDbReference = mFirebaseDatabase.getReference().child(getString(R.string.top_level_tenant));
 
     }
 
