@@ -30,6 +30,9 @@ dependencies {
 
     //image loading? Glide? Picasso?
 
+    //Firebase
+    compile 'com.google.firebase:firebase-database:11.0.2'
+
 }
 
 //this is what reads the config info from the google-services.json file
