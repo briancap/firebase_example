@@ -6,7 +6,7 @@ package com.example.brian.roomy.Firebase;
 
 public class Tenant {
     private String tenantId;
-    private String name;
+    private String tenantName;
     private String phoneNumber;
     private String leaseId;
     private String addressId;
@@ -16,6 +16,10 @@ public class Tenant {
 
 //CONSTRUCTORS
     public Tenant(){
+    }
+
+    public Tenant(String tenantName){
+        this.tenantName = tenantName;
     }
 
 
@@ -28,12 +32,12 @@ public class Tenant {
         this.tenantId = tenantId;
     }
 
-    public String getName() {
-        return name;
+    public String getTenantName() {
+        return tenantName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
     }
 
     public String getPhoneNumber() {
