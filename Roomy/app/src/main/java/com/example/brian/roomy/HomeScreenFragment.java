@@ -1,18 +1,25 @@
 package com.example.brian.roomy;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.brian.roomy.Firebase.Tenant;
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Arrays;
 
 /**
  * Fragment that will be added to MainActivity
@@ -21,7 +28,12 @@ import com.google.firebase.database.FirebaseDatabase;
 public class HomeScreenFragment extends Fragment {
     private FirebaseDatabase    mFirebaseDatabase;
     private DatabaseReference   mTenetDbReference;
-    private ChildEventListener  mChildEventListener;
+    private FirebaseAuth        mFirebaseAuth;
+
+    private ChildEventListener              mChildEventListener;
+    private FirebaseAuth.AuthStateListener  mAuthStateListener;
+
+    public static final int RC_SIGN_IN = 1;
 
     Button testButton;
 
@@ -31,8 +43,9 @@ public class HomeScreenFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mTenetDbReference = mFirebaseDatabase.getReference().child(getString(R.string.top_level_tenant));
+        mFirebaseDatabase   = FirebaseDatabase.getInstance();
+        mTenetDbReference   = mFirebaseDatabase.getReference().child(getString(R.string.top_level_tenant));
+        mFirebaseAuth       = FirebaseAuth.getInstance();
         mChildEventListener = new ChildEventListener() {
 
             //called when item is inserted and for every item when listener is attached
@@ -75,7 +88,33 @@ public class HomeScreenFragment extends Fragment {
         //Actions outside the Tenant node will not trigger any of the above methods
         mTenetDbReference.addChildEventListener(mChildEventListener);
 
-
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if(user != null){
+                    //user is signed in
+                    Toast.makeText(getContext(), "Signed in", Toast.LENGTH_SHORT).show();
+                } else{
+                    //user is signed out
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setIsSmartLockEnabled(false) //so we have to login every time
+                                    .setAvailableProviders(
+                                            Arrays.asList(
+                                                    new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
+                                                    // more setup required
+                                                   // , new AuthUI.IdpConfig.Builder(AuthUI.PHONE_VERIFICATION_PROVIDER).build()
+                                                    // more setup required
+                                                   // , new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+                                            )
+                                    )
+                                    .build()
+                            , RC_SIGN_IN);
+                }
+            }
+        }; //END OF AuthStateListener
 
 
 
@@ -100,6 +139,17 @@ public class HomeScreenFragment extends Fragment {
         return rootView;
     }//END ON onCreateView
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
 
 
 
