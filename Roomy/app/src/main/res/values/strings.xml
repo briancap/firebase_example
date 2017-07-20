@@ -5,5 +5,6 @@
 
 
     <!--    Options Menu Values     -->
+    <string name="options_menu_sign_out">Sign Out</string>
     <string name="options_menu_settings">Settings</string>
 </resources>

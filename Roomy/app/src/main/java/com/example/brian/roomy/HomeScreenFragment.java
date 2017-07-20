@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -43,6 +46,7 @@ public class HomeScreenFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         mFirebaseDatabase   = FirebaseDatabase.getInstance();
         mTenetDbReference   = mFirebaseDatabase.getReference().child(getString(R.string.top_level_tenant));
         mFirebaseAuth       = FirebaseAuth.getInstance();
@@ -131,13 +135,14 @@ public class HomeScreenFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Tenant tenant = new Tenant("with phone");
-                tenant.setPhoneNumber("5555555555");
+                tenant.setPhoneNumber("1234567555");
                 mTenetDbReference.push().setValue(tenant);
             }
         });
 
         return rootView;
     }//END ON onCreateView
+
 
     @Override
     public void onPause(){
@@ -151,6 +156,23 @@ public class HomeScreenFragment extends Fragment {
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.menu_main_activity, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if(id == R.id.sign_out){
+            Toast.makeText(getActivity().getApplicationContext(), "Sign Out", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.settings){
+            Toast.makeText(getActivity().getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
 
