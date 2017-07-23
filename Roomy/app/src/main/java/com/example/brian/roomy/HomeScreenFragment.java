@@ -135,7 +135,7 @@ public class HomeScreenFragment extends Fragment {
         int id = item.getItemId();
         switch(id) {
             case R.id.sign_out:
-                AuthUI.getInstance().signOut(getActivity());
+                FirebaseAuth.getInstance().signOut();
                 break;
             case R.id.settings:
                 Toast.makeText(getActivity().getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
