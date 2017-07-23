@@ -1,5 +1,6 @@
 package com.example.brian.roomy;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -23,6 +24,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Fragment that will be added to MainActivity
@@ -86,9 +90,21 @@ public class HomeScreenFragment extends Fragment {
                 }
             }
         }; //END OF AuthStateListener
-        
-
     } //END OF onCreate
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == RC_SIGN_IN){
+            if(resultCode == RESULT_OK){
+                Toast.makeText(getContext(), "Signed In!", Toast.LENGTH_SHORT).show();
+            } else if(resultCode == RESULT_CANCELED){
+                Toast.makeText(getContext(), "Sig in Canceled", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container
@@ -117,13 +133,17 @@ public class HomeScreenFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
+        switch(id) {
+            case R.id.sign_out:
+                AuthUI.getInstance().signOut(getActivity());
+                break;
+            case R.id.settings:
+                Toast.makeText(getActivity().getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
+                break;
 
-        if(id == R.id.sign_out){
-            Toast.makeText(getActivity().getApplicationContext(), "Sign Out", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.settings){
-            Toast.makeText(getActivity().getApplicationContext(), "Settings", Toast.LENGTH_SHORT).show();
+            default:
+                break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
