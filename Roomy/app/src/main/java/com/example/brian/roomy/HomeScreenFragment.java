@@ -29,12 +29,16 @@ import java.util.Arrays;
  */
 
 public class HomeScreenFragment extends Fragment {
+    private static final String ANONYMOUS = "anonymous";
+
     private FirebaseDatabase    mFirebaseDatabase;
     private DatabaseReference   mTenetDbReference;
     private FirebaseAuth        mFirebaseAuth;
 
     private ChildEventListener              mChildEventListener;
     private FirebaseAuth.AuthStateListener  mAuthStateListener;
+    private String                          mUsername;
+
 
     public static final int RC_SIGN_IN = 1;
 
@@ -47,50 +51,12 @@ public class HomeScreenFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mUsername = ANONYMOUS;
+
         mFirebaseDatabase   = FirebaseDatabase.getInstance();
         mTenetDbReference   = mFirebaseDatabase.getReference().child(getString(R.string.top_level_tenant));
         mFirebaseAuth       = FirebaseAuth.getInstance();
-        mChildEventListener = new ChildEventListener() {
 
-            //called when item is inserted and for every item when listener is attached
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //Tenant class was used to create children of the Tenant node so we can deserialize back to Tenant object
-                dataSnapshot.getValue(Tenant.class);
-
-                //can now add data to a list or other object for other transactions
-                //in the future I may use this with an if statement to get all the roommates of the current user
-                //do i have to loop through all nodes to return a single user? guessing there is come function to do this for me
-            }
-
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //changes to can probably happen to anything but ID
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //still want to keep data even if user deletes app
-                //will have to touch no this in term and conditions
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                //should only happen if i decide to restructure the DB
-            }
-
-            //called when there is an error when making changes. usually a permissions issues
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //error handling
-            }
-
-        }; //END OF onChildEventListener
-
-        //listener is specific to the Tenant node since it is attached to the Tenant reference variable
-        //Actions outside the Tenant node will not trigger any of the above methods
-        mTenetDbReference.addChildEventListener(mChildEventListener);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -98,9 +64,10 @@ public class HomeScreenFragment extends Fragment {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if(user != null){
                     //user is signed in
-                    Toast.makeText(getContext(), "Signed in", Toast.LENGTH_SHORT).show();
+                    onSignedInInitialize(user.getDisplayName());
                 } else{
                     //user is signed out
+                    onSignedOutCleanup();
                     startActivityForResult(
                             AuthUI.getInstance()
                                     .createSignInIntentBuilder()
@@ -119,8 +86,7 @@ public class HomeScreenFragment extends Fragment {
                 }
             }
         }; //END OF AuthStateListener
-
-
+        
 
     } //END OF onCreate
 
@@ -143,19 +109,6 @@ public class HomeScreenFragment extends Fragment {
         return rootView;
     }//END ON onCreateView
 
-
-    @Override
-    public void onPause(){
-        super.onPause();
-        mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         inflater.inflate(R.menu.menu_main_activity, menu);
@@ -174,6 +127,87 @@ public class HomeScreenFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
 
+    @Override
+    public void onPause(){
+        super.onPause();
+        if(mAuthStateListener != null){
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+        }
+        detachDatabaseReadListener();
+        //clear adapter if i ever make one
+    }
+
+  private void onSignedInInitialize(String username){
+        mUsername = username;
+        attachTenetReadListener();
+    }
+
+    private void onSignedOutCleanup(){
+        mUsername = ANONYMOUS;
+        //clear adapter if i ever use one
+        //detach listener
+        detachDatabaseReadListener();
+    }
+
+    private void attachTenetReadListener() {
+        //null check makes sure mChildEventListener is not added more than once
+        if (mChildEventListener == null){
+            mChildEventListener = new ChildEventListener() {
+
+                //called when item is inserted and for every item when listener is attached
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    //Tenant class was used to create children of the Tenant node so we can deserialize back to Tenant object
+                    dataSnapshot.getValue(Tenant.class);
+
+                    //can now add data to a list or other object for other transactions
+                    //in the future I may use this with an if statement to get all the roommates of the current user
+                    //do i have to loop through all nodes to return a single user? guessing there is come function to do this for me
+                }
+
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    //changes to can probably happen to anything but ID
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    //still want to keep data even if user deletes app
+                    //will have to touch no this in term and conditions
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    //should only happen if i decide to restructure the DB
+                }
+
+                //called when there is an error when making changes. usually a permissions issues
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    //error handling
+                }
+
+            }; //END OF onChildEventListener
+
+            //listener is specific to the Tenant node since it is attached to the Tenant reference variable
+            //Actions outside the Tenant node will not trigger any of the above methods
+            mTenetDbReference.addChildEventListener(mChildEventListener);
+        }
+    }
+
+    private void detachDatabaseReadListener(){
+        //null check makes sure mChildEventListener is not removed more than once
+        if (mChildEventListener != null) {
+            mTenetDbReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
+    }
 
 } //END OF CLASS
