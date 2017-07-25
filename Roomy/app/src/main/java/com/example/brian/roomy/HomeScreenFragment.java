@@ -116,7 +116,7 @@ public class HomeScreenFragment extends Fragment {
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tenant tenant = new Tenant("with phone");
+                Tenant tenant = new Tenant("this");
                 tenant.setPhoneNumber("1234567555");
                 mTenetDbReference.push().setValue(tenant);
             }
@@ -184,7 +184,7 @@ public class HomeScreenFragment extends Fragment {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     //Tenant class was used to create children of the Tenant node so we can deserialize back to Tenant object
-                    dataSnapshot.getValue(Tenant.class);
+                    Tenant tenant = dataSnapshot.getValue(Tenant.class);
 
                     //can now add data to a list or other object for other transactions
                     //in the future I may use this with an if statement to get all the roommates of the current user
@@ -229,5 +229,6 @@ public class HomeScreenFragment extends Fragment {
             mChildEventListener = null;
         }
     }
+
 
 } //END OF CLASS
